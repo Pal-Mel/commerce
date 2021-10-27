@@ -18,12 +18,37 @@
       <div class="wrapper toggled">
         <!--start header -->
         <header>
-          <div class="topbar d-flex align-items-center">
-            <nav class="navbar sticky-top navbar-light shadow rounded column">
+                
+               <div class="topbar ">
+
+            <nav class="navbar sticky-top navbar-light shadow rounded">
+              <div class ="d-inline-flex">
+                <a class="nav-link" href="{% url 'user:index' %}">
+                  <img src="../static/favicon.png" class="rounded-circle border border-3 img-thumbnail" alt="nopic">
+                </a>
+                <div >
+                  <a class="nav-link" href="{% url 'enc:index' %}">Енциклопедія</a>
+                </div>
+                <div >
+                  <a class="nav-link" href="{% url 'auction:index' %}">Аукціон </a>
+                </div>
+              </div>      
+
+               <div class="nav-item ">
+              <!--  <div >
+                  <a class="nav-link" href="{% url 'enc:index' %}">Енциклопедія</a>
+                </div>
+                <div >
+                  <a class="nav-link" href="{% url 'auction:index' %}">Аукціон </a>
+                </div>
+              <div >-->
             {% if user.is_authenticated %}
-            <div>Signed in as <strong>{{ user.username }}</strong>.</div>
+                <div>Signed in as <strong>{{ user.username }}</strong>.</div>
             {% else %} Not signed in. {% endif %}
+            </div> 
             </nav>
+
+
         </div>
         </header>
         <!--end header -->
@@ -31,7 +56,7 @@
         <div class="page-wrapper">
           <div class="page-content">
             {% block content %}
-            
+
             {% endblock %}
 
           </div>
