@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "user/layout.html" %}
 
-{% block content %}
+{% block body %}
      
         <div>
             {% if user.is_authenticated %}
@@ -16,8 +16,8 @@
         </div>
        
         <hr>
+
 {% endblock %}
 
-{% block body %}
-{% endblock %}
+
 

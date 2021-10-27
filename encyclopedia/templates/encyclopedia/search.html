@@ -1,0 +1,16 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Енциклопедія
+{% endblock %}
+
+{% block body %}
+    <h1>Знайдені сторінки за запитом</h1>
+
+    <ul>
+        {% for entry in entries %}
+             <li><a href="/enc/wiki/{{entry|safe}}">{{ entry }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

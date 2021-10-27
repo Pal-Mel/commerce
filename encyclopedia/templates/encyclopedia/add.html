@@ -1,0 +1,29 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Дадати нову статтю
+{% endblock %}
+
+{% block body %}
+
+
+
+<form action="{%url 'enc:add'%}" method="post">
+    {% csrf_token %}
+    <div class="card" style="height: 100%;">
+      <div class="card-body">
+        <h5 class="card-title">
+            <h3>Створення нової статті</h3>
+        </h5>
+        {% if error %}
+          <h6 style="color:red;">{{error}}</h6>
+        {% endif %}
+        <p class="card-text">
+        {{form}}
+</p>
+  <button type="submit" class="btn btn-primary" fullwidth>Зберегти статтю</button>
+</div>
+</div>
+
+</form>
+{% endblock %}
