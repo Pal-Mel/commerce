@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+     
+        <div>
+            {% if user.is_authenticated %}
+            <h1>Ви зайшли як <strong>{{ user.username }}</strong></h1>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'auction:index' %}">Active Listings</a>
+                </li>
+            </ul>
+            {% else %}
+                <h2>Треба  <a class="nav-link" href="{% url 'user:login' %}">зайти</a> на сайт </h2> 
+            {% endif %}
+        </div>
+       
+        <hr>
+{% endblock %}
+
+{% block body %}
+{% endblock %}
+

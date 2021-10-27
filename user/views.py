@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 
 def index(request):
-    pass
+   return render(request, "user/index.html")
+
 
 def login_view(request):
     if request.method == "POST":
@@ -18,9 +19,9 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("user:index"))
         else:
-            return render(request, "auctions/login.html", {
+            return render(request, "user/login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
@@ -29,7 +30,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("user:index"))
 
 
 def register(request):
