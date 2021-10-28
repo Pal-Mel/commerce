@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.contrib.admin.sites import site
 from django.http import request
 from django.urls import include, path
+from django.conf.urls.static import static
+from django.conf import settings
 
 app_name = "commerce"
 
@@ -25,5 +27,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auction/", include("auctions.urls")),
     path("", include('user.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-]

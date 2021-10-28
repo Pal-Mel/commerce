@@ -1,8 +1,11 @@
+import os
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import  HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from user.models import *
+from django.conf import settings
 
 def index(request):
    return render(request, "user/index.html")
@@ -19,14 +22,20 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("user:index"))
+            profile = Profile.objects.get( user=request.user.id)
+            request.session["photoUser"] = os.path.join("..",settings.MEDIA_URL,  profile.photo.url)
+            # request.session["profileUser"]['date_of_birth'] = profile.date_of_birth
+
+            return HttpResponseRedirect(reverse("auction:index"))
         else:
             return render(request, "user/login.html", {
-                "message": "Invalid username and/or password."
+                "message": "Некорректний логін або пароль. Виправте та спробуйте знову."
             })
     else:
         return render(request, "user/login.html")
 
+def login_view_redirect(request, next):
+    return HttpResponseRedirect(reverse("user:index"))  
 
 def logout_view(request):
     logout(request)

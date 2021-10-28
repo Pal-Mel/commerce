@@ -3,8 +3,6 @@
 {% block content %}
 <div style="display:flex;">
     <div class="sidebar col-lg-2 col-md-3" >
-      <h2>Wiki</h2>
-
       <form action=" {%url 'enc:search'%}" method="post">
           {% csrf_token %}
           <div class="input-group mb-3">

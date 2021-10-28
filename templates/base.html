@@ -24,7 +24,7 @@
             <nav class="navbar sticky-top navbar-light shadow rounded">
               <div class ="d-inline-flex">
                 <a class="nav-link" href="{% url 'user:index' %}">
-                  <img src="../static/favicon.png" class="rounded-circle border border-3 img-thumbnail" alt="nopic">
+                  <img src="../static/favicon.png" class="rounded-circle border border-3 img-thumbnail small-picture" alt="nopic">
                 </a>
                 <div >
                   <a class="nav-link" href="{% url 'enc:index' %}">Енциклопедія</a>
@@ -34,7 +34,7 @@
                 </div>
               </div>      
 
-               <div class="nav-item ">
+            <div class="nav-item ">
               <!--  <div >
                   <a class="nav-link" href="{% url 'enc:index' %}">Енциклопедія</a>
                 </div>
@@ -43,11 +43,23 @@
                 </div>
               <div >-->
             {% if user.is_authenticated %}
-                <div>Signed in as <strong>{{ user.username }}</strong>.</div>
-            {% else %} Not signed in. {% endif %}
-            </div> 
-            </nav>
+            <div class ="d-inline-flex">
+              <a class="nav-link" href="{% url 'user:index' %}">
+              {% if request.session.photoUser %}
+                <img src={{ request.session.photoUser }} class="small-picture rounded border border-1 img-thumbnail" alt="nopic">
+              {% else %}
+                <img src="../static/no_user_photo.png" class="small-picture rounded border border-1 img-thumbnail "  alt="nopic">
+              {% endif %}
+            </a> 
 
+                <div><small>Увійшли як <strong>{{ user.username }}</strong></small>.
+                  <a class="nav-link" href="{% url 'user:logout' %}">вийти</a>
+                </div>
+                </div>
+            {% else %}                        <a class="nav-link" href="{% url 'user:login' %}">Увійти</a>
+            {% endif %}
+            </div>
+            </nav>
 
         </div>
         </header>

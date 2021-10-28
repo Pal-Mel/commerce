@@ -24,7 +24,7 @@ class Auction(models.Model):
     image=models.ImageField(upload_to='images_auctions/%Y/%m/%d', null=True, blank=True)
     status=models.ForeignKey(Status,on_delete=models.PROTECT,related_name="auction_statuses")
     createdate= models.DateTimeField()
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name }, початкова вартість {self.first_rate} ({self.createdate}) - {self.status}"
