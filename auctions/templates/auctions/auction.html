@@ -1,0 +1,48 @@
+{% extends "auctions/layout.html" %} {% block body %}
+<div class="col-xs-12">
+  <div class="card">
+    <div class="card-header">
+      <h6 class="card-title">{{auction.name}}</h6>
+    </div>
+    <div class="row">
+      <div class="col-auto" style="display:flex; flex-direction: column;justify-content: space-between;align-items: center;">
+        <div><img
+          src="/media/{{auction.image}}"
+          class="card-img-top big-picture"
+          alt="..."
+        />
+      </div>
+      <div >
+        <table style="font-size:12px; width:100%;">
+        <tr><th>Створено користувачем: </th> <td>{{auction.user.username}}</td> </tr> 
+        <tr><th>Дата створення : </th> <td>{{auction.createdate}}</td> </tr> 
+        <!-- <tr><th>Дата закінчення торгів : </th> <td>{{auction.enddate}}</td> </tr>  -->
+
+      </table> 
+      </div>
+      </div>
+      <div class="col">
+        <strong>Опис </strong>
+        <hr />
+        <div class="card-text card-description">{{auction.description}}</div>
+        <hr />
+
+        <div>
+          <strong>Початкова вартість </strong>{{auction.first_rate}} грн.
+        </div>
+        <div><strong>Поточна ставка </strong>{{auction.last_rate}} грн.</div>
+        <hr />
+        <strong>Категорії</strong>
+        {% for categori in categories %}
+        <small class="border border-1"
+          ><strong> {{categori.name}}</strong></small
+        >
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card-body">
+      <hr />
+    </div>
+  </div>
+</div>
+{% endblock %}

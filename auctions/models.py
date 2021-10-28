@@ -9,6 +9,8 @@ class Categori(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+
 
 class Status(models.Model):
     name=models.CharField(max_length=50)
@@ -18,16 +20,17 @@ class Status(models.Model):
 
 class Auction(models.Model):
     name = models.CharField(max_length=150)
-    categori=models.ForeignKey(Categori,on_delete=models.PROTECT,related_name="categories")
+    categori=models.ManyToManyField(Categori, blank=True, related_name="categories")
     description=models.TextField()
     first_rate=models.FloatField()
     image=models.ImageField(upload_to='images_auctions/%Y/%m/%d', null=True, blank=True)
     status=models.ForeignKey(Status,on_delete=models.PROTECT,related_name="auction_statuses")
-    createdate= models.DateTimeField()
+    createdate= models.DateTimeField(auto_created=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name }, початкова вартість {self.first_rate} ({self.createdate}) - {self.status}"
+
 
 class Rates(models.Model):
     auction=models.ForeignKey(Auction,on_delete=models.DO_NOTHING,related_name="rate_auctions")

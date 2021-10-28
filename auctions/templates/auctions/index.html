@@ -1,7 +1,38 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>Активні аукціони</h2> 
+<hr>
+<div>Відбір за категорією: </div>  
+<form>
+<select class="form-select">
+    <option selected value='*'>всі категорії</option>
+    {% for category in categories %}
+        <option value={{category.id}}>{{ category.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+<hr>
+<div class =" d-inline-flex ">
 
-    TODO
+{% for auction in auctions %}
+<div class=" col-xs-12 col-md-6 col-xl-3 py-1 px-1">
+<div class="card py-1" >
+    <img src='/media/{{auction.image}}' class="card-img-top big-picture" alt="...">
+    <div class="card-body">
+      <h6 class="card-title">{{auction.name}}</h6>
+      <hr>
+      <div class="card-text card-description">{{auction.description}}</div>
+      <hr>
+      <div><strong>Початкова вартість </strong>{{auction.first_rate}} грн.</div>
+      <div><strong>Поточна ставка </strong>{{auction.last_rate}} грн.</div>
+      <a href="/auction/{{auction.id}}" class="btn btn-primary full-width">детальна інформація</a>
+      <hr>
+      
+      <small class ="border border-1"><strong> -- </strong></small>
+    </div>
+  </div>
+</div>
+  {% endfor %}
+</div>
 {% endblock %}
