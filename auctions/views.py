@@ -11,7 +11,7 @@ from .models import *
 
 from django.contrib.auth.decorators import login_required
 
-@login_required()
+
 
 def index(request):
     categories = Categori.objects.all()
@@ -21,7 +21,7 @@ def index(request):
         'auctions':auctions
     })
 
-
+@login_required()
 def getAuction(request,id):
     auction = Auction.objects.get(id=id)
     categories = auction.categori.all()

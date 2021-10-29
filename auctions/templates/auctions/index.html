@@ -28,8 +28,9 @@
       <div><strong>Поточна ставка </strong>{{auction.last_rate}} грн.</div>
       <a href="/auction/{{auction.id}}" class="btn btn-primary full-width">детальна інформація</a>
       <hr>
-      
-      <small class ="border border-1"><strong> -- </strong></small>
+      {% for categori in auction.categori.all %}
+      <small class="border border-1"><strong> {{categori.name}}</strong></small>
+      {% endfor %}
     </div>
   </div>
 </div>
