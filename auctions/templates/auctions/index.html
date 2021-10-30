@@ -1,23 +1,54 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Активні аукціони</h2> 
-<hr>
-<div>Відбір за категорією: </div>  
-<form>
-<select class="form-select">
-    <option selected value='*'>всі категорії</option>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link {% if active == 1 %}active {% endif %}" href="{% url 'auction:index' %}">Всі</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if active == 2 %}active {% endif %}" href="{% url 'auction:indexActive' %}">Активні</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if active == 3 %}active {% endif %}" href="{% url 'auction:indexWatchList' %}">Відстеження</a>
+  </li>
+
+</ul>
+
+
+{% if active == 1 %}<form action="{% url 'auction:changeCategoryAuction' %}" method="post">{% endif %}
+{% if active == 2 %}<form action="{% url 'auction:changeCategoryActiveAuction' %}" method="post">{% endif %}
+{% if active == 3 %}<form >{% endif %}
+{% if active != 3 %}
+  {% csrf_token %}
+  <label>Відбір за категорією: </label>
+  <select class="form-select" name="chooseCat">
+    {% if currentCat == 'all' %}
+    
+    <option  selected  value='all'>всі категорії</option>
+    {% else %}
+  <option  value='all'>всі категорії</option>
+  {% endif %}
     {% for category in categories %}
-        <option value={{category.id}}>{{ category.name }}</option>
+    {% if currentCat == category.name %}
+
+    <option value={{category.id}} selected >{{ category.name }}</option>
+    {% else %}
+    <option value={{category.id}}>{{ category.name }}</option>
+    {% endif %}
     {% endfor %}
   </select>
-</form>
+
+  <button type="submit">ok</button>
+{% endif %}
 <hr>
 <div class =" d-inline-flex ">
-
-{% for auction in auctions %}
+{% if not auctions %}
+<h1> список порожній </h1>
+{% else %} 
+  {% for auction in auctions %}
 <div class=" col-xs-12 col-md-6 col-xl-3 py-1 px-1">
 <div class="card py-1" >
+    <h6>{{auction.status}}</h6>
     <img src='/media/{{auction.image}}' class="card-img-top big-picture" alt="...">
     <div class="card-body">
       <h6 class="card-title">{{auction.name}}</h6>
@@ -31,9 +62,13 @@
       {% for categori in auction.categori.all %}
       <small class="border border-1"><strong> {{categori.name}}</strong></small>
       {% endfor %}
+    
     </div>
   </div>
 </div>
+</form>
+
   {% endfor %}
+  {% endif %}
 </div>
 {% endblock %}
