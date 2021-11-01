@@ -24,31 +24,42 @@ class Auction(models.Model):
     description=models.TextField()
     first_rate=models.FloatField()
     image=models.ImageField(upload_to='images_auctions/%Y/%m/%d', null=True, blank=True)
-    status=models.OneToOneField(Status,on_delete=models.PROTECT)
-    createdate= models.DateTimeField(auto_created=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status=models.ForeignKey(Status,on_delete=models.DO_NOTHING)
+    createdate= models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    last_rate=models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.name }, початкова вартість {self.first_rate} ({self.createdate}) - {self.status}"
+
+class AuctionWinner(models.Model):
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    auction=models.ForeignKey(Auction, on_delete=models.DO_NOTHING)
+    rate=models.FloatField(default=0)
+    date= models.DateTimeField(auto_now_add=True,  blank=True)
+
 
 class WatchAuction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.DO_NOTHING)
 
+    def __str__(self):
+        return f"{self.auction.name} - ({self.user.username})"
+
 class Rates(models.Model):
     auction=models.ForeignKey(Auction,on_delete=models.DO_NOTHING,related_name="rate_auctions")
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     rate=models.FloatField()
-    date=models.DateTimeField()
+    date=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.auction }, ставка {self.rate} ({self.date})"
 
 class Comments(models.Model):
     auction=models.ForeignKey(Auction,on_delete=models.DO_NOTHING,related_name="auction_comments")
-    comment=models.TextField(max_length=350)
-    date=models.DateTimeField()
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    comment=models.TextField(max_length=255)
+    date=models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name="user_comments")
 
     def __str__(self):
         return f"{self.auction } - {self.comment} ({self.date, self.user})"

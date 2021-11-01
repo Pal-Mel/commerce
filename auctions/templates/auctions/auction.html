@@ -1,11 +1,44 @@
-{% extends "auctions/layout.html" %} {% block body %}
+{% extends "auctions/layout.html" %} 
+
+{% block body %}
 <div class="col-xs-12">
   <div class="card">
     <div class="card-header">
       <h6 class="card-title">{{auction.name}}</h6>
+      {% if user.is_authenticated %}
+    <div class="d-inline-flex">
+      <form action="{% url 'auction:addWatch' auction.id %}" method="POST"  >
+        {% csrf_token %}
+        {% if inWatch %}
+        <button type="submit" class="btn btn-outline-success">не спостерігати</button>
+        {% else %}
+        <button type="submit"  class="btn btn-success">спостерігати</button>
+
+        {% endif %}
+      </form>
+      {% if auction.user.id == user.id%}
+        {% if auction.status.id == 1%}
+        <form action="{% url 'auction:closeAuction' auction.id %}" method="POST"  >
+          {% csrf_token %}
+          <button type="submit"  class="btn btn-secondary">Закрити аукціон та визнати переможця</button>
+
+          </form>
+        {% endif%}
+      {%endif%}
+
+    </div>
+      {% endif%}
     </div>
     <div class="row">
-      <div class="col-auto" style="display:flex; flex-direction: column;justify-content: space-between;align-items: center;">
+      <div class="col-auto" style="display:flex; flex-direction: column;align-items: center;">
+        <div style ="position:absolute; left:20px;">
+          <h6>{{auction.status}}</h6>
+          {% if inWatch %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="green" class="bi bi-eyeglasses" viewBox="0 0 16 16">
+          <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+        </svg>
+        {% endif %}
+        </div>
         <div><img
           src="/media/{{auction.image}}"
           class="card-img-top big-picture"
@@ -16,9 +49,11 @@
         <table style="font-size:12px; width:100%;">
         <tr><th>Створено користувачем: </th> <td>{{auction.user.username}}</td> </tr> 
         <tr><th>Дата створення : </th> <td>{{auction.createdate}}</td> </tr> 
-        <!-- <tr><th>Дата закінчення торгів : </th> <td>{{auction.enddate}}</td> </tr>  -->
-
-      </table> 
+      </table>
+      <strong>Категорії</strong>
+      {% for categori in categories %}
+      <small class="border border-1"><strong> {{categori.name}}</strong></small>
+      {% endfor %}
       </div>
       </div>
       <div class="col">
@@ -26,18 +61,29 @@
         <hr />
         <div class="card-text card-description">{{auction.description}}</div>
         <hr />
-
-        <div>
-          <strong>Початкова вартість </strong>{{auction.first_rate}} грн.
+        <div class=" d-inline-flex">
+        <div><strong>Початкова вартість </strong>{{auction.first_rate}} грн.</div>
+        <div><strong>Поточна ставка </strong>{{minRate}} грн.</div>
+      </div>
+        {% if winner == '' %}
+        <form action="{% url 'auction:makeRate' auction.id minRate%}" method="POST"  >
+          {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="number" min={{minRate}} class="form-control" placeholder="Ваша ставка" value={{minRate}} name="youRate">
+          <button class="btn btn-outline-secondary" type="submit" >Зробити ставку</button>
         </div>
-        <div><strong>Поточна ставка </strong>{{auction.last_rate}} грн.</div>
-        <hr />
-        <strong>Категорії</strong>
-        {% for categori in categories %}
-        <small class="border border-1"
-          ><strong> {{categori.name}}</strong></small
-        >
-        {% endfor %}
+        
+        </form>
+        {% else %}
+        <div><h1>Переможець : <strong>{{winner}}</strong></h1></div>
+        {% endif %}
+        <div>
+          <ul>
+          {% for rate in rates %}
+          <li>{{rate.user}} {{rate.date}} <strong>{{rate.rate}}</strong></li>
+          {% endfor%}
+        </ul>
+        </div>
       </div>
     </div>
     <div class="card-body">

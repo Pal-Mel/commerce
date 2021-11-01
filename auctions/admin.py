@@ -9,5 +9,6 @@ admin.site.register(Status)
 admin.site.register(Auction)
 admin.site.register(Rates)
 admin.site.register(Comments)
+admin.site.register(WatchAuction)
 
 

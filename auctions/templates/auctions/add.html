@@ -1,0 +1,9 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+<h1> Додати новий аукціон</h1>
+<form action ="{% url 'auction:addAuction' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+{{form.as_p}}
+<button type="submit">Зберегти </button>
+</form>
+{% endblock %}

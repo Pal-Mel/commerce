@@ -22,10 +22,9 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            profile = Profile.objects.get( user=request.user.id)
-            request.session["photoUser"] = os.path.join("..",settings.MEDIA_URL,  profile.photo.url)
-            # request.session["profileUser"]['date_of_birth'] = profile.date_of_birth
-
+            if len(Profile.objects.filter(user=request.user.id)) != 0:
+                profile = Profile.objects.get( user=request.user.id)
+                request.session["photoUser"] = os.path.join("..",settings.MEDIA_URL,  profile.photo.url)
             return HttpResponseRedirect(reverse("auction:index"))
         else:
             return render(request, "user/login.html", {
@@ -64,6 +63,6 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("user:index"))
     else:
         return render(request, "user/register.html")
