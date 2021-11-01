@@ -16,4 +16,6 @@ urlpatterns = [
     path("active", views.indexActive, name="changeCategoryActiveAuction"), # Активні аукціони
     path("watch", views.indexWatchList, name="indexWatchList"), # активні аукціони
     path('<id>',views.getAuction,name="getAuction"),
+    path("comment/<id>", views.comment, name="comment"), #  Додавання до списку спостереження
+
 ]

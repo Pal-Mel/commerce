@@ -155,7 +155,6 @@ def makeRate(request,id, minRate):
     if request.method == "POST":
         auction = Auction.objects.get(id=id)
         youRate = request.POST["youRate"]
-        print(youRate)
         if float(youRate) > float(minRate):
             Rates.objects.create(rate=float(youRate), auction=auction, user=request.user)
             auction.last_rate = youRate
@@ -195,10 +194,21 @@ def addAuction(request):
         "form":AuctionForm,
     })
 
+@login_required()
+
+def comment(request,id):
+    if request.method == "POST":
+        comment = request.POST["comment"].strip()
+        if comment != "":
+            auction = Auction.objects.get(id=id)
+            Comments.objects.create(comment=comment, auction=auction, user=request.user)
+        return HttpResponseRedirect(reverse('auction:getAuction', kwargs={"id":id}))
+    return HttpResponseRedirect(reverse('auction:getAuction', kwargs={"id":id}))
 
 def getAuction(request,id):
     auction = Auction.objects.get(id=id)
     categories = auction.categori.all()
+    comments = Comments.objects.filter(auction=auction).order_by("-date")
     if request.user.is_authenticated:
         list = WatchAuction.objects.filter(user=request.user, auction = auction)
         if len(list.all()) == 0:
@@ -215,20 +225,20 @@ def getAuction(request,id):
             winner =w.all()[0].user
             if winner == request.user:
                 messages.info(request, f'Ви виграли у цьому ауціоні. Зв’яжіться з продавцем для отримання товару.') 
-
         else:
             winner = ''
-            
         return render(request, "auctions/auction.html", {
             'auction':auction,
             'categories':categories,
             'inWatch':inWatch,
             'minRate':minRate,
             'rates':rates,
-            "winner": winner
+            "winner": winner,
+            "comments": comments
         })
     else:
         return render(request, "auctions/auction.html", {
             'auction':auction,
             'categories':categories,
+            "comments": comments,
         })

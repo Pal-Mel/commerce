@@ -65,6 +65,7 @@
         <div><strong>Початкова вартість </strong>{{auction.first_rate}} грн.</div>
         <div><strong>Поточна ставка </strong>{{minRate}} грн.</div>
       </div>
+      {% if user.is_authenticated %}
         {% if winner == '' %}
         <form action="{% url 'auction:makeRate' auction.id minRate%}" method="POST"  >
           {% csrf_token %}
@@ -75,7 +76,9 @@
         
         </form>
         {% else %}
+
         <div><h1>Переможець : <strong>{{winner}}</strong></h1></div>
+        {% endif %}
         {% endif %}
         <div>
           <ul>
@@ -88,6 +91,23 @@
     </div>
     <div class="card-body">
       <hr />
+      <h2> Коментарі</h2>
+      {% if user.is_authenticated %}
+      <form action="{% url 'auction:comment' auction.id%}" method="POST"  >
+        {% csrf_token %}
+      <div class="input-group mb-3">
+        <input type="textarea" class="form-control" placeholder="текст коментара" name="comment">
+        <button class="btn btn-outline-secondary" type="submit" >додати коментар</button>
+      </div>
+      
+      </form>
+      {% endif %}
+      <table style="font-size:12px;">
+
+      {% for com in comments %}
+        <tr><th >{{com.user.username}} </th> <td>{{com.date}}</td> <td>{{com.comment}}</td></tr> 
+      {% endfor%}
+    </table>
     </div>
   </div>
 </div>
