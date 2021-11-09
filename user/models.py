@@ -12,4 +12,4 @@ class Profile(models.Model):
     photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
 
     def __str__(self):
-        return 'Профіль користувача {}'.format(self.user.username)
+        return f'Профіль користувача {self.user.username} ( {self.user.email} )'
