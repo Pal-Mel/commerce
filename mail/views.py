@@ -10,17 +10,17 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from user.models import User
  
-
+@login_required
 
 def index(request):
 
-    # Authenticated users view their inbox
-    if request.user.is_authenticated:
+    # # Authenticated users view their inbox
+    # if request.user.is_authenticated:
         return render(request, "mail/inbox.html")
 
-    # Everyone else is prompted to sign in
-    else:
-        return HttpResponseRedirect(reverse("login"))
+    # # Everyone else is prompted to sign in
+    # else:
+    #     return render(request, "mail/login.html")
 
 
 @csrf_exempt
