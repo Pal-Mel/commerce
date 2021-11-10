@@ -55,21 +55,21 @@ def compose(request):
     body = data.get("body", "")
 
     # Create one email for each recipient, plus sender
-    users = set()
+    # users = set()
     # users.add(request.user)
-    users.update(recipients)
-    for user in users:
-        email = Email(
+    # users.update(recipients)
+    # for user in users:
+    email = Email(
             user=request.user,
             sender=request.user,
             subject=subject,
             body=body,
             read=user == request.user
         )
-        email.save()
-        for recipient in recipients:
+    email.save()
+    for recipient in recipients:
             email.recipients.add(recipient)
-        email.save()
+    email.save()
 
     return JsonResponse({"message": "Email sent successfully."}, status=201)
 
@@ -84,9 +84,9 @@ def mailbox(request, mailbox):
         )
     elif mailbox == "sent":
         emails = Email.objects.filter(
-            user=request.user, sender=request.user
+            sender=request.user
         )
-    elif mailbox == "archive":
+    elif mailbox == "archived":
         emails = Email.objects.filter(
             recipients=request.user, archived=True
         )

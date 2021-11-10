@@ -1,24 +1,49 @@
+var but = ['inbox', 'sent', 'archived']
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Use buttons to toggle between views
-  document
-    .querySelector("#inbox")
-    .addEventListener("click", () => load_mailbox("inbox"));
-  document
-    .querySelector("#sent")
-    .addEventListener("click", () => load_mailbox("sent"));
-  document
-    .querySelector("#archived")
-    .addEventListener("click", () => load_mailbox("archive"));
-  document.querySelector("#compose").addEventListener("click", compose_email);
+
+  but.forEach(b => {
+    document
+    .querySelector(`#${b}`)
+    .addEventListener("click", () => {
+      set_background(`#${b}`)
+      load_mailbox(`${b}`)
+    });
+  })
 
 
-  // By default, load the inbox
-  load_mailbox("inbox");
+  document.addEventListener('click', event => {
+    const element = event.target;
+    if (element.className.indexOf('email-message') !== -1) {
+      openEmail(element.dataset.id)
+    }
+    
 });
+
+
+   document.querySelector("#compose").addEventListener("click", compose_email);
+
+  load_mailbox("inbox");
+  set_background(`#inbox`)
+});
+
+function set_background(b) {
+  var button 
+  but.forEach(b_ => {
+    button =  document.querySelector(`#${b_}`)
+    button.style = {}
+  })
+
+  button =  document.querySelector(b)
+  button.style.backgroundColor="lightgrey"
+  button.style.color="black"
+  button.style.fontWeight="900"
+}
 
 function compose_email() {
   // Show compose view and hide other views
   document.querySelector("#emails-view").style.display = "none";
+  document.querySelector("#email-see").style.display = "none";
   document.querySelector("#compose-view").style.display = "block";
 
   document.querySelector("form").onsubmit = (event) => {
@@ -60,7 +85,6 @@ function compose_email() {
 }
 
 function archiveEmail(id, val, mailbox) {
-  console.log(mailbox)
   fetch(`emails/${Number(id)}`, {
     method: "PUT",
     body: JSON.stringify({archived:val})
@@ -70,12 +94,45 @@ function archiveEmail(id, val, mailbox) {
 
 }
 
+function openEmail(id) {
+  fetch(`emails/${Number(id)}`, {
+    method: "PUT",
+    body: JSON.stringify({read:true})
+    }).then(() => 
+
+  fetch(`emails/${Number(id)}`, {
+    method: "GET",
+    body: JSON.stringify()
+    }).then((res) => res.json()).then(result => {
+      var main_node = document.querySelector("#email-see")
+      while (main_node.firstChild) {
+        main_node.removeChild(main_node.firstChild);
+    }
+      document.querySelector("#emails-view").style.display = "none";
+      document.querySelector("#compose-view").style.display = "none";
+      document.querySelector("#email-see").style.display = "block";
+
+      var mes = document.createElement('div')
+      mes.innerHTML = `<table> 
+      <tr><th>Тема </th> <td>${result.subject}</td></tr>                
+      <tr><th>Відправник  </th> <td>${result.sender}</td></tr>                
+      <tr><th>Отримувач  </th> <td>${result.recipients.join(", ")}</td></tr>                
+      <tr><th>Коли відправлено  </th> <td>${result.timestamp}</td></tr>                
+      <tr><th> Текст повідомлення </th> <td>${result.body}</td></tr>                
+      </table>`
+
+      main_node.appendChild(mes)
+    })
+    )
+}
 
 function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
 
   document.querySelector("#emails-view").style.display = "block";
   document.querySelector("#compose-view").style.display = "none";
+  document.querySelector("#email-see").style.display = "none";
+
 
   // Show the mailbox name
   document.querySelector("#emails-view").innerHTML = `<h3>${
@@ -89,17 +146,29 @@ function load_mailbox(mailbox) {
       return res.json();
     })
     .then((result) => {
+      document.querySelector("#emails-view").dataset.mailbox = mailbox
       result.forEach((mail) => {
         const element = document.createElement("div");
         var style = 'display:flex; justify-content: space-between; width: 100%;'
         if (mail.read){style += 'background-color:white; '} else {style += 'background-color:lightgrey; '}
         element.style =style
-        element.className = 'card-header border border-secondary rounded-pill m-2'
-        element.innerHTML =  ` <div style="display:flex; align-items:center">
+        element.dataset.id = mail.id
+        
+        element.className = 'email-message card-header border border-secondary rounded-pill m-2 btn'
+        if (mailbox !== "sent") { 
+        element.innerHTML =  ` <a style="display:flex; align-items:center">
                                             <div class="px-2"><strong>Дата: </strong><br><small>${mail.timestamp}</small></div>
                                             <div class="px-2"><strong>Відправник: </strong><br> ${mail.sender} </div>
                                             <div class="px-2"><strong>Тема: </strong><br> ${mail.subject}</div>
-                              </div>`
+                              </a>`
+        } else {
+          element.innerHTML =  ` <a style="display:flex; align-items:center">
+                                            <div class="px-2"><strong>Дата: </strong><br><small>${mail.timestamp}</small></div>
+                                            <div class="px-2"><strong>Отримувач: </strong><br> ${mail.recipients} </div>
+                                            <div class="px-2"><strong>Тема: </strong><br> ${mail.subject}</div>
+                              </a>`
+        }
+
         const buttons = document.createElement('div')
         buttons.style="display:flex;"
          if (mailbox.toUpperCase() == 'INBOX') {
@@ -112,12 +181,12 @@ function load_mailbox(mailbox) {
            buttons.appendChild(button)
            button = document.createElement("div")
            button.title = `відповісти ${mail.sender}`
-           button.innerHTML =  `<a data-id='${mail}' class="btn btn-outline-primary m-1"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply" viewBox="0 0 16 16">
+           button.innerHTML =  `<a class="btn btn-outline-primary m-1"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply" viewBox="0 0 16 16">
            <path d="M6.598 5.013a.144.144 0 0 1 .202.134V6.3a.5.5 0 0 0 .5.5c.667 0 2.013.005 3.3.822.984.624 1.99 1.76 2.595 3.876-1.02-.983-2.185-1.516-3.205-1.799a8.74 8.74 0 0 0-1.921-.306 7.404 7.404 0 0 0-.798.008h-.013l-.005.001h-.001L7.3 9.9l-.05-.498a.5.5 0 0 0-.45.498v1.153c0 .108-.11.176-.202.134L2.614 8.254a.503.503 0 0 0-.042-.028.147.147 0 0 1 0-.252.499.499 0 0 0 .042-.028l3.984-2.933zM7.8 10.386c.068 0 .143.003.223.006.434.02 1.034.086 1.7.271 1.326.368 2.896 1.202 3.94 3.08a.5.5 0 0 0 .933-.305c-.464-3.71-1.886-5.662-3.46-6.66-1.245-.79-2.527-.942-3.336-.971v-.66a1.144 1.144 0 0 0-1.767-.96l-3.994 2.94a1.147 1.147 0 0 0 0 1.946l3.994 2.94a1.144 1.144 0 0 0 1.767-.96v-.667z"/>
          </svg> </a>`
            buttons.appendChild(button)
          }
-        if (mailbox.toUpperCase() == 'ARCHIVE') {
+        if (mailbox.toUpperCase() == 'ARCHIVED') {
            var button = document.createElement("div")
            button.title = "Витягти з архіву"
            button.innerHTML =  `<a onclick=archiveEmail(${mail.id},false,'${mailbox}') class="btn btn-outline-primary m-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-dash" viewBox="0 0 16 16">
