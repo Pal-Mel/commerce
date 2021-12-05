@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'auctions',
     'encyclopedia',
     'mail',
+    'network',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
